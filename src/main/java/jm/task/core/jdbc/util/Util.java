@@ -9,13 +9,7 @@ public class Util {
     private static final String USERNAME = "root";
     private static final String PASSWORD = "KataAcademy";
 
-    public static void connectToDatabase() {
-        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD)) {
-            if (!connection.isClosed()) {
-                System.out.println("Соединение установлено");
-            }
-            } catch (SQLException e) {
-            System.err.println("Ошибка подключения");
-        }
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
-}
+    }
