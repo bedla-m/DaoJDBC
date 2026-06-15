@@ -3,6 +3,10 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +22,8 @@ public class UserDaoJDBCImpl implements UserDao {
                 "lastName VARCHAR(100) NOT NULL," +
                 "age TINYINT NOT NULL" +
                 ")";
-        try (Connection connection = Util.getConnection()) {
-            Statement st = connection.createStatement();
+        try (Connection connection = Util.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeUpdate(sql);
             System.out.println("Таблица создана, или уже существует!");
         } catch (SQLException e) {
@@ -29,8 +33,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void dropUsersTable() {
         String sql = "DROP TABLE IF EXISTS user;";
-        try (Connection connection = Util.getConnection()) {
-            Statement st = connection.createStatement();
+        try (Connection connection = Util.getConnection();
+             Statement st = connection.createStatement()) {
             st.executeUpdate(sql);
             System.out.println("Таблица удалена, или её не существует");
         } catch (SQLException e) {
@@ -40,8 +44,8 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public void saveUser(String name, String lastName, byte age) {
         String sql = "INSERT INTO user (name, lastName, age) VALUES (?, ?, ?)";
-        try (Connection connection = Util.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, name);
             ps.setString(2, lastName);
             ps.setByte(3, age);
@@ -53,21 +57,22 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        String sql = "DELETE FROM user WHERE id = " + "'" + id + "'";
-        try (Connection connection = Util.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "DELETE FROM user WHERE id = ?";
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, id);
             ps.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Ошибка saveUser" + e.getMessage());
+            System.out.println("Ошибка saveUser " + e.getMessage());
         }
     }
 
     public List<User> getAllUsers() {
         List<User> listUser = new ArrayList<>();
         String sql = "SELECT id, name, lastName, age FROM user";
-        try (Connection connection = Util.getConnection()) {
-            Statement ps = connection.createStatement();
-            ResultSet resultSet = ps.executeQuery(sql);
+        try (Connection connection = Util.getConnection();
+             Statement ps = connection.createStatement();
+             ResultSet resultSet = ps.executeQuery(sql)) {
             while (resultSet.next()) {
                 long id = resultSet.getLong("id");
                 String name = resultSet.getString(2);
@@ -85,10 +90,11 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        String sql = "DELETE TABLE FROM user";
-        try (Connection connection = Util.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "TRUNCATE TABLE user";
+        try (Connection connection = Util.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.executeUpdate(sql);
+            System.out.println("Данные в таблице удалены!");
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
         }
