@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    public UserDaoJDBCImpl() { //Конструктор по условию должен быть пустым
+    public UserDaoJDBCImpl() { // Если мы здесь реализуем коннкшен, то это будет вроде бы "узким местом" для кода
+        //А также придется создать доп метод close, и вызвать его после вызова метода, иначе коннекшн будет всегда открыт.
     }
 
     public void createUsersTable() {
