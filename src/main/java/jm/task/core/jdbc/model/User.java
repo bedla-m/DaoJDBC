@@ -14,7 +14,7 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "lastname", nullable = false) //разве название колонки не через "_" ?
     private String lastName;
 
     @Column(name = "age", nullable = false)
